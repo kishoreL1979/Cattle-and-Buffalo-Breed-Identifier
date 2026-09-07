@@ -1,0 +1,45 @@
+# Python environment and bytecode caches
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# Datasets and large images
+cnn dataset/
+dataset_yolo/
+dataset/
+images/
+labels/
+*.jpg
+*.jpeg
+*.png
+*.webp
+*_annotations.coco.json
+
+# Model weights and runs outputs
+models/
+runs/
+*.pth
+*.pt
+*.bin
+*.onnx
+
+# Secrets and environment variables
+.env
+.env.local
+*.key
+
+# Frontend dependencies and build output
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+.DS_Store
+
+# Temporary scratch scripts and logs
+scratch/
+*.log
+backend/.env
+.env

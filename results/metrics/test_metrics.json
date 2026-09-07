@@ -1,0 +1,65 @@
+{
+  "accuracy": 0.5420560747663551,
+  "macro_precision": 0.6172679210204566,
+  "macro_recall": 0.5588645921979256,
+  "macro_f1": 0.5239813158417809,
+  "weighted_precision": 0.6574594040992783,
+  "weighted_recall": 0.5420560747663551,
+  "weighted_f1": 0.5110577968000268,
+  "per_class": {
+    "gir": {
+      "precision": 1.0,
+      "recall": 0.18181818181818182,
+      "f1_score": 0.3076923076923077,
+      "support": 22
+    },
+    "jaffrabadi": {
+      "precision": 0.38461538461538464,
+      "recall": 0.7142857142857143,
+      "f1_score": 0.5,
+      "support": 7
+    },
+    "kankrej": {
+      "precision": 0.7142857142857143,
+      "recall": 1.0,
+      "f1_score": 0.8333333333333334,
+      "support": 15
+    },
+    "mehsana": {
+      "precision": 0.3333333333333333,
+      "recall": 0.2,
+      "f1_score": 0.25,
+      "support": 10
+    },
+    "murrah": {
+      "precision": 0.41379310344827586,
+      "recall": 0.8571428571428571,
+      "f1_score": 0.5581395348837209,
+      "support": 14
+    },
+    "red_sindhi": {
+      "precision": 0.7142857142857143,
+      "recall": 0.38461538461538464,
+      "f1_score": 0.5,
+      "support": 13
+    },
+    "sahiwal": {
+      "precision": 0.4117647058823529,
+      "recall": 0.6363636363636364,
+      "f1_score": 0.5,
+      "support": 11
+    },
+    "surti": {
+      "precision": 0.8333333333333334,
+      "recall": 0.5555555555555556,
+      "f1_score": 0.6666666666666666,
+      "support": 9
+    },
+    "tharparkar": {
+      "precision": 0.75,
+      "recall": 0.5,
+      "f1_score": 0.6,
+      "support": 6
+    }
+  }
+}

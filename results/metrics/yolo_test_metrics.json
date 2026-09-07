@@ -1,0 +1,17 @@
+{
+  "precision": 0.2017,
+  "recall": 0.1944,
+  "mAP_50": 0.0941,
+  "mAP_50_95": 0.041,
+  "classes": {
+    "0": "Gir",
+    "1": "Jaffrabadi",
+    "2": "Kankrej",
+    "3": "Mehsana",
+    "4": "Murrah",
+    "5": "Red Sindhi",
+    "6": "Sahiwal",
+    "7": "Surti",
+    "8": "Tharparkar"
+  }
+}
