@@ -3,6 +3,11 @@ import logging
 from pathlib import Path
 from PIL import Image
 import numpy as np
+import torch
+
+# Memory optimization for 512MB RAM cloud environments (Render Free Tier)
+torch.set_num_threads(1)
+
 from backend.app.config import BASE_DIR, BREED_DISPLAY_NAMES, SUPPORTED_BREED_NAMES
 
 logger = logging.getLogger(__name__)

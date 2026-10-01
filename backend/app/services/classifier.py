@@ -7,6 +7,9 @@ from torchvision import transforms
 from PIL import Image
 from fastapi import HTTPException, status
 
+# Memory optimization for 512MB RAM cloud environments (Render Free Tier)
+torch.set_num_threads(1)
+
 from backend.app.config import (
     BASE_DIR, BREED_TO_ANIMAL_TYPE, BREED_DISPLAY_NAMES
 )
