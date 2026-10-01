@@ -1,0 +1,24 @@
+{
+  "class_to_idx": {
+    "gir": 0,
+    "jaffrabadi": 1,
+    "kankrej": 2,
+    "mehsana": 3,
+    "murrah": 4,
+    "red_sindhi": 5,
+    "sahiwal": 6,
+    "surti": 7,
+    "tharparkar": 8
+  },
+  "idx_to_class": {
+    "0": "gir",
+    "1": "jaffrabadi",
+    "2": "kankrej",
+    "3": "mehsana",
+    "4": "murrah",
+    "5": "red_sindhi",
+    "6": "sahiwal",
+    "7": "surti",
+    "8": "tharparkar"
+  }
+}
