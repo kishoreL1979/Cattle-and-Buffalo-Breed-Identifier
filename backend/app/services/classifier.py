@@ -51,7 +51,8 @@ class BreedClassifierService:
             return
             
         self.model = BreedEfficientNetV2(num_classes=num_classes, pretrained=False).to(self.device)
-        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
+        state_dict = torch.load(model_path, map_location=self.device, weights_only=True)
+        self.model.load_state_dict(state_dict)
         self.model.eval()
         
         imagenet_mean = [0.485, 0.456, 0.406]
