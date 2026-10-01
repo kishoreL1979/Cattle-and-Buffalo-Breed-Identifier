@@ -8,7 +8,7 @@ const API_BASE_URL = rawUrl;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  timeout: 90000,
 });
 
 export const predictBreed = async (file) => {
@@ -29,7 +29,7 @@ export const predictBreed = async (file) => {
       throw new Error(message);
     } else if (error.request) {
       // Request made but no response received
-      throw new Error('Backend server unavailable. Please ensure FastAPI server is running at http://127.0.0.1:8000.');
+      throw new Error('Backend server unavailable or waking up. If deployed on Render, please wait 30 seconds for cold-start and try again.');
     } else {
       throw new Error(error.message || 'An unexpected error occurred.');
     }
