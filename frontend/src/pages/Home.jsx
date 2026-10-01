@@ -18,11 +18,11 @@ export default function Home({ onNavigateToIdentify }) {
     <div className="space-y-16 py-8">
       
       {/* Hero Banner */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white p-8 sm:p-12 shadow-xl border border-slate-800">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white p-8 sm:p-12 shadow-xl border border-blue-900/50">
         <div className="max-w-3xl relative z-10 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
             <Cpu className="w-4 h-4" />
-            <span>EfficientNet-B0 CNN Transfer Learning</span>
+            <span>CABBI BreedVision Multi-Modal Pipeline</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
@@ -36,7 +36,7 @@ export default function Home({ onNavigateToIdentify }) {
           <div className="pt-2 flex flex-wrap gap-4">
             <button
               onClick={onNavigateToIdentify}
-              className="px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-base flex items-center gap-2 transition-all shadow-lg shadow-emerald-500/25"
+              className="px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-base flex items-center gap-2 transition-all shadow-lg shadow-blue-600/25"
             >
               <span>Identify Breed Now</span>
               <ArrowRight className="w-5 h-5" />
@@ -48,7 +48,7 @@ export default function Home({ onNavigateToIdentify }) {
       {/* Key System Features */}
       <section className="grid md:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
-          <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
             <Layers className="w-6 h-6" />
           </div>
           <h3 className="text-lg font-bold text-slate-800">9 Breed Classes</h3>
@@ -58,7 +58,7 @@ export default function Home({ onNavigateToIdentify }) {
         </div>
 
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
-          <div className="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
             <Zap className="w-6 h-6" />
           </div>
           <h3 className="text-lg font-bold text-slate-800">Fast CNN Prediction</h3>
@@ -68,7 +68,7 @@ export default function Home({ onNavigateToIdentify }) {
         </div>
 
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
-          <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center">
             <Database className="w-6 h-6" />
           </div>
           <h3 className="text-lg font-bold text-slate-800">Imbalance Handling</h3>
@@ -83,17 +83,17 @@ export default function Home({ onNavigateToIdentify }) {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">Supported Breeds</h2>
-            <p className="text-sm text-slate-500">List of 9 indigenous cattle and buffalo breeds recognized by the CNN model</p>
+            <p className="text-sm text-slate-500">List of 9 indigenous cattle and buffalo breeds recognized by the system</p>
           </div>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {breeds.map((breed, idx) => (
-            <div key={idx} className="bg-white rounded-xl p-4 border border-slate-200 shadow-xs hover:border-emerald-300 transition-colors">
+            <div key={idx} className="bg-white rounded-xl p-4 border border-slate-200 shadow-xs hover:border-blue-300 transition-colors">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-bold text-slate-800 text-base">{breed.name}</h4>
                 <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${
-                  breed.type === 'Cattle' ? 'bg-amber-100 text-amber-800' : 'bg-teal-100 text-teal-800'
+                  breed.type === 'Cattle' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
                 }`}>
                   {breed.type}
                 </span>

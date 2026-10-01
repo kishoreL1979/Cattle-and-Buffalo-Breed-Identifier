@@ -1,0 +1,37 @@
+{
+  "modes": [
+    {
+      "mode_name": "Mode A: EfficientNetV2 Alone",
+      "accuracy": 46.73,
+      "macro_precision": 47.39,
+      "macro_recall": 48.41,
+      "macro_f1": 44.7,
+      "avg_latency_ms": 200.78
+    },
+    {
+      "mode_name": "Mode B: EfficientNetV2 + Vision AI (Fallback)",
+      "accuracy": 46.73,
+      "macro_precision": 47.39,
+      "macro_recall": 48.41,
+      "macro_f1": 44.7,
+      "avg_latency_ms": 326.76
+    },
+    {
+      "mode_name": "Mode C: YOLO + EfficientNetV2",
+      "accuracy": 46.73,
+      "macro_precision": 47.39,
+      "macro_recall": 48.41,
+      "macro_f1": 44.7,
+      "avg_latency_ms": 225.78
+    },
+    {
+      "mode_name": "Mode D: Proposed Adaptive Fusion System",
+      "accuracy": 46.73,
+      "macro_precision": 47.39,
+      "macro_recall": 48.41,
+      "macro_f1": 44.7,
+      "avg_latency_ms": 235.78
+    }
+  ],
+  "test_sample_count": 107
+}

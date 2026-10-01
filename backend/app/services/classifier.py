@@ -8,12 +8,15 @@ from PIL import Image
 from fastapi import HTTPException, status
 
 from backend.app.config import (
-    MODEL_PATH, CLASS_MAPPING_PATH,
-    BREED_TO_ANIMAL_TYPE, BREED_DISPLAY_NAMES
+    BASE_DIR, BREED_TO_ANIMAL_TYPE, BREED_DISPLAY_NAMES
 )
-from training.cnn.model import BreedEfficientNet
+from training.efficientnetv2.model import BreedEfficientNetV2
 from backend.app.services.yolo_detector import yolo_service
 from backend.app.services.openrouter_service import openrouter_service
+from backend.app.services.adaptive_fusion import adaptive_fusion_engine
+
+V2_MODEL_PATH = os.path.join(BASE_DIR, "models", "efficientnetv2", "best_model.pth")
+V2_MAPPING_PATH = os.path.join(BASE_DIR, "models", "efficientnetv2", "class_mapping.json")
 
 class BreedClassifierService:
     def __init__(self):
@@ -25,23 +28,27 @@ class BreedClassifierService:
         self._load_model()
 
     def _load_model(self):
-        if not os.path.exists(CLASS_MAPPING_PATH):
-            print(f"[Warning] Class mapping file not found at {CLASS_MAPPING_PATH}.")
+        # Fallback to CNN mapping if EfficientNetV2 mapping not found
+        mapping_path = V2_MAPPING_PATH if os.path.exists(V2_MAPPING_PATH) else os.path.join(BASE_DIR, "models", "cnn", "class_mapping.json")
+        model_path = V2_MODEL_PATH if os.path.exists(V2_MODEL_PATH) else os.path.join(BASE_DIR, "models", "cnn", "best_model.pth")
+        
+        if not os.path.exists(mapping_path):
+            print(f"[Warning] Class mapping file not found at {mapping_path}.")
             return
 
-        with open(CLASS_MAPPING_PATH, 'r') as f:
+        with open(mapping_path, 'r') as f:
             mapping = json.load(f)
             
         self.class_to_idx = mapping['class_to_idx']
         self.idx_to_class = {int(k) if str(k).isdigit() else k: v for k, v in mapping['idx_to_class'].items()}
         num_classes = len(self.class_to_idx)
         
-        if not os.path.exists(MODEL_PATH):
-            print(f"[Warning] Model checkpoint not found at {MODEL_PATH}.")
+        if not os.path.exists(model_path):
+            print(f"[Warning] EfficientNetV2 checkpoint not found at {model_path}.")
             return
             
-        self.model = BreedEfficientNet(num_classes=num_classes, pretrained=False).to(self.device)
-        self.model.load_state_dict(torch.load(MODEL_PATH, map_location=self.device))
+        self.model = BreedEfficientNetV2(num_classes=num_classes, pretrained=False).to(self.device)
+        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
         
         imagenet_mean = [0.485, 0.456, 0.406]
@@ -52,22 +59,22 @@ class BreedClassifierService:
             transforms.ToTensor(),
             transforms.Normalize(mean=imagenet_mean, std=imagenet_std)
         ])
-        print(f"[ClassifierService] CNN Model successfully loaded on {self.device} with {num_classes} classes.")
+        print(f"[BreedClassifierService] EfficientNetV2 Model loaded on {self.device} with {num_classes} classes.")
 
     def predict_full_pipeline(self, image: Image.Image, top_k: int = 3, force_ai_mock: dict = None) -> dict:
         """
-        Full Pipeline:
-        Custom YOLO Detection (ROI Crop + BBox + YOLO Confidence + YOLO Breed) -> CNN Inference -> OpenRouter AI -> Decision Engine.
+        Full Proposed Research Pipeline:
+        Input Image -> YOLO Animal ROI Crop -> EfficientNetV2 Breed Classifier -> Vision AI -> Adaptive Arbitration Engine -> Final Breed.
         """
         if self.model is None:
             self._load_model()
             if self.model is None:
                 raise HTTPException(
                     status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                    detail="CNN Model checkpoint is not available. Please train the model first."
+                    detail="EfficientNetV2 model checkpoint is unavailable. Please train model first."
                 )
 
-        # 1. Custom YOLO Detection
+        # 1. YOLO Animal ROI Crop & Detection
         yolo_res = yolo_service.detect_and_crop(image)
         cropped_img = yolo_res["cropped_image"]
         yolo_confidence = round(float(yolo_res["yolo_confidence"]), 4)
@@ -75,7 +82,7 @@ class BreedClassifierService:
         bbox = yolo_res.get("bbox")
         class_id = yolo_res.get("class_id")
 
-        # 2. CNN Model Inference (using cropped ROI)
+        # 2. EfficientNetV2 Classifier Inference
         tensor_img = self.transform(cropped_img).unsqueeze(0).to(self.device)
         
         with torch.no_grad():
@@ -99,32 +106,35 @@ class BreedClassifierService:
         cnn_breed = BREED_DISPLAY_NAMES.get(top_1_raw, top_1_raw.replace("_", " ").title())
         cnn_confidence = round(float(top_probs[0]), 4)
 
-        # 3. OpenRouter AI Analysis
+        # 3. OpenRouter Vision AI Verification Analysis
         if force_ai_mock is not None:
             ai_res = force_ai_mock
         else:
-            ai_res = openrouter_service.analyze_breed(image)
+            ai_res = openrouter_service.analyze_breed(image, candidate_cnn_breed=cnn_breed)
 
-        # 4. Final Decision Engine Logic
-        if ai_res is None or "ai_confidence" not in ai_res:
-            final_breed = cnn_breed
-            prediction_source = "CNN Fallback"
-            ai_breed = None
-            ai_confidence = None
-            ai_reasoning = "OpenRouter AI analysis unavailable; defaulted to CNN model prediction."
-        else:
-            ai_breed = ai_res["ai_breed"]
-            ai_confidence = round(float(ai_res["ai_confidence"]), 4)
-            ai_reasoning = ai_res.get("ai_reasoning", "OpenRouter visual evaluation.")
-            
-            if cnn_confidence > ai_confidence and yolo_confidence > ai_confidence:
-                final_breed = cnn_breed
-                prediction_source = "CNN"
-            else:
-                final_breed = ai_breed
-                prediction_source = "OpenRouter AI"
+        ai_breed = ai_res["ai_breed"] if (ai_res and "ai_breed" in ai_res) else None
+        ai_confidence = round(float(ai_res["ai_confidence"]), 4) if (ai_res and "ai_confidence" in ai_res) else None
+        ai_reasoning = ai_res.get("ai_reasoning") if ai_res else None
 
-        # Determine Animal Type
+        # 4. Adaptive Prediction Fusion / Accuracy Arbitration Engine
+        arbitration = adaptive_fusion_engine.arbitrate(
+            cnn_breed=cnn_breed,
+            cnn_confidence=cnn_confidence,
+            ai_breed=ai_breed,
+            ai_confidence=ai_confidence,
+            ai_reasoning=ai_reasoning,
+            yolo_breed=yolo_breed,
+            yolo_confidence=yolo_confidence,
+            bbox=bbox
+        )
+
+        final_breed = arbitration["final_breed"]
+        final_confidence = arbitration.get("final_confidence", cnn_confidence)
+        prediction_source = arbitration["prediction_source"]
+        decision_rule = arbitration["decision_rule"]
+        arbitration_reason = arbitration["arbitration_reason"]
+
+        # Animal Type
         raw_final_key = final_breed.lower().replace(" ", "_")
         animal_type = BREED_TO_ANIMAL_TYPE.get(raw_final_key, BREED_TO_ANIMAL_TYPE.get(top_1_raw, "Cattle"))
 
@@ -140,7 +150,10 @@ class BreedClassifierService:
             "ai_confidence": ai_confidence,
             "ai_reasoning": ai_reasoning,
             "final_breed": final_breed,
+            "final_confidence": final_confidence,
             "prediction_source": prediction_source,
+            "decision_rule": decision_rule,
+            "arbitration_reason": arbitration_reason,
             "top_predictions": top_predictions
         }
 

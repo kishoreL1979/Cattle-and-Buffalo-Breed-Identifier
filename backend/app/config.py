@@ -3,12 +3,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-# Load .env file from backend directory or workspace root
-env_path = BASE_DIR / "backend" / ".env"
-if env_path.exists():
-    load_dotenv(env_path)
-else:
-    load_dotenv(BASE_DIR / ".env")
+# Load .env file from backend directory, workspace root, or current directory
+for env_file in [BASE_DIR / "backend" / ".env", BASE_DIR / ".env", Path.cwd() / ".env"]:
+    if env_file.exists():
+        load_dotenv(env_file, override=True)
 
 MODEL_DIR = BASE_DIR / "models" / "cnn"
 MODEL_PATH = MODEL_DIR / "best_model.pth"

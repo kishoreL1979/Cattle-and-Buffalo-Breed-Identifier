@@ -65,7 +65,7 @@ export default function ImageUploader({ onPredict, isLoading, selectedFile, setS
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
       <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-        <ImageIcon className="w-5 h-5 text-emerald-600" />
+        <ImageIcon className="w-5 h-5 text-blue-600" />
         Upload Animal Image
       </h3>
 
@@ -85,8 +85,8 @@ export default function ImageUploader({ onPredict, isLoading, selectedFile, setS
           onClick={() => inputRef.current?.click()}
           className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 ${
             dragActive
-              ? 'border-emerald-500 bg-emerald-50/50 scale-[0.99]'
-              : 'border-slate-300 hover:border-emerald-400 hover:bg-slate-50'
+              ? 'border-blue-500 bg-blue-50/50 scale-[0.99]'
+              : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'
           }`}
         >
           <input
@@ -97,12 +97,12 @@ export default function ImageUploader({ onPredict, isLoading, selectedFile, setS
             onChange={(e) => e.target.files && handleFileChange(e.target.files[0])}
           />
           
-          <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center">
             <UploadCloud className="w-8 h-8" />
           </div>
           
           <p className="text-base font-semibold text-slate-700">
-            Drag and drop your image here, or <span className="text-emerald-600 underline">browse</span>
+            Drag and drop your image here, or <span className="text-blue-600 underline">browse</span>
           </p>
           <p className="text-xs text-slate-400 mt-2">
             Supports JPG, PNG, WEBP up to 10MB
@@ -134,12 +134,12 @@ export default function ImageUploader({ onPredict, isLoading, selectedFile, setS
           <button
             onClick={() => onPredict(selectedFile)}
             disabled={isLoading}
-            className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-semibold shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-semibold shadow-md shadow-blue-600/20 flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Running EfficientNet-B0 CNN Inference...</span>
+                <span>Analyzing animal image...</span>
               </>
             ) : (
               <>

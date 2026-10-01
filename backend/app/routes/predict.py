@@ -8,7 +8,7 @@ router = APIRouter()
 async def predict_breed(file: UploadFile = File(...)):
     """
     Classifies cattle/buffalo breed using multi-modal pipeline:
-    YOLO Animal Detection -> EfficientNet-B0 CNN -> OpenRouter AI -> Strict Confidence Decision Logic.
+    YOLO Animal Detection -> EfficientNetV2 CNN -> OpenRouter AI -> Strict Confidence Decision Logic.
     """
     if not file:
         raise HTTPException(

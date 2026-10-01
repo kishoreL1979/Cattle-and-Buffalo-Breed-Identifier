@@ -36,7 +36,7 @@ export default function Identify() {
           Cattle & Buffalo Breed Identification
         </h1>
         <p className="text-sm text-slate-500 mt-1">
-          Upload an image of a cattle or buffalo to classify its breed using EfficientNet-B0 CNN.
+          Upload an image of a cattle or buffalo to identify its breed using CABBI BreedVision.
         </p>
       </div>
 
@@ -69,16 +69,16 @@ export default function Identify() {
         {/* Right Column: Prediction Result or Placeholder */}
         <div>
           {result ? (
-            <PredictionResult result={result} />
+            <PredictionResult result={result} previewUrl={previewUrl} />
           ) : (
             <div className="bg-white rounded-2xl p-8 border border-slate-200 text-center text-slate-400 space-y-4 min-h-[350px] flex flex-col items-center justify-center">
-              <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+              <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
                 <HelpCircle className="w-8 h-8" />
               </div>
               <div>
                 <h3 className="font-bold text-slate-700 text-base">No Prediction Yet</h3>
                 <p className="text-xs text-slate-400 max-w-xs mt-1">
-                  Upload an image on the left and click "Identify Breed" to view CNN classification results.
+                  Upload an image on the left and click "Identify Breed" to view classification results.
                 </p>
               </div>
             </div>

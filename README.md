@@ -1,114 +1,97 @@
-# AI-Based Cattle and Buffalo Breed Identification System
+# AI-Based Cattle and Buffalo Breed Identification System (Proposed Research Architecture)
 
-An end-to-end multi-modal computer vision and web application that identifies 9 major indigenous cattle and buffalo breeds using a fine-tuned **EfficientNet-B0 Convolutional Neural Network (CNN)**, a **Custom-Trained YOLOv8 Breed Detection Model**, and **OpenRouter Vision AI**, governed by a strict confidence-based final decision rule.
-
----
-
-## Table of Contents
-1. [Project Overview](#project-overview)
-2. [Custom YOLO Model & Training](#custom-yolo-model--training)
-3. [Multi-Modal Pipeline Architecture](#multi-modal-pipeline-architecture)
-4. [Strict Decision Logic](#strict-decision-logic)
-5. [Supported Breeds](#supported-breeds)
-6. [API Specification](#api-specification)
-7. [Running the Application](#running-the-application)
+An end-to-end multi-modal research system and web application for indigenous cattle and buffalo breed identification using **YOLO ROI Detection**, an upgraded **EfficientNetV2 Classifier**, **OpenRouter Vision AI**, and an **Adaptive Prediction Fusion / Accuracy Arbitration Engine**.
 
 ---
 
-## Project Overview
-Indigenous cattle (*Bos indicus*) and buffalo (*Bubalus bubalis*) breeds play a critical role in sustainable agriculture and dairy farming. This system combines **Custom YOLO object detection** for animal ROI cropping, a fine-tuned **EfficientNet-B0 CNN**, and **OpenRouter Vision AI** to deliver reliable, transparent breed classification with individual confidence scores and top-3 probability rankings.
-
----
-
-## Custom YOLO Model & Training
-
-### Dataset & Annotation Conversion
-* **Total Dataset Size:** 843 image files pre-split into 488 train, 248 validation, and 107 test images.
-* **Bounding Box Annotations:** 27 COCO JSON files containing 1,309 bounding box annotations for 774 images (91.8%) were converted into normalized YOLO format `[class_id, x_center, y_center, width, height]`. Full-image default bounding boxes were generated for the remaining 69 images to achieve 100% coverage across all 843 dataset images.
-* **Target Classes (0..8):** `0: Gir`, `1: Jaffrabadi`, `2: Kankrej`, `3: Mehsana`, `4: Murrah`, `5: Red Sindhi`, `6: Sahiwal`, `7: Surti`, `8: Tharparkar`.
-
-### Training Configuration
-* **Model Backbone:** `yolov8n.pt`
-* **Dataset Config:** [`dataset_yolo/data.yaml`](file:///c:/Users/lokik/OneDrive/Desktop/ai-breed-identifier/dataset_yolo/data.yaml)
-* **Image Size:** 416 × 416
-* **Epochs:** 10
-* **Batch Size:** 16
-* **Optimizer:** AdamW
-* **Saved Model Location:** [`models/yolo/best.pt`](file:///c:/Users/lokik/OneDrive/Desktop/ai-breed-identifier/models/yolo/best.pt)
-
-### Genuine Test Evaluation Metrics (107 Test Images)
-* **Precision (mP):** **20.17%**
-* **Recall (mR):** **19.44%**
-* **mAP@50:** **9.41%**
-* **mAP@50-95:** **4.10%**
-* **Metrics File:** [`results/metrics/yolo_test_metrics.json`](file:///c:/Users/lokik/OneDrive/Desktop/ai-breed-identifier/results/metrics/yolo_test_metrics.json)
-
----
-
-## Multi-Modal Pipeline Architecture
+## Proposed System Architecture
 
 ```text
 Input Image
     │
     ▼
-[Custom YOLO Breed Detector] ──> Returns YOLO Breed, BBox & Detection Confidence
+[YOLO Object Detection] ──> Extracts Animal Bounding Box & ROI Image Crop
     │
     ▼
-[Cropped Animal ROI] ──> [EfficientNet-B0 CNN] ──> Returns CNN Breed & Confidence Score
+[EfficientNetV2 Classifier] ──> Calculates EfficientNetV2 Breed & Confidence Score
     │
     ▼
-[OpenRouter Vision AI] ──> Analyzes Visual Features ──> Returns AI Breed & Confidence
+[OpenRouter Vision AI] ──> Evaluates Visual Features ──> Calculates AI Breed & Confidence Score
     │
     ▼
-[Strict Confidence Decision Engine]
+[Adaptive Prediction Fusion / Accuracy Arbitration Engine]
     │
-    ├── IF CNN_confidence > AI_confidence AND YOLO_confidence > AI_confidence
-    │       └── FINAL BREED = CNN predicted breed (Source: "CNN")
+    ├── Rule 1 (AGREEMENT_HIGH_CONF): EfficientNetV2 Breed == Vision AI Breed ──> Consensus Match
+    ├── Rule 2 (AI_OVERRIDE_LOW_CNN): AI Conf >= 0.70 & CNN Conf < 0.65 ──> Vision AI Override
+    ├── Rule 3 (CNN_HIGH_CONF_DISAGREEMENT): CNN Conf >= 0.65 & AI Conf < 0.70 ──> CNN Dominance
+    ├── Rule 4 (WEIGHTED_ARBITRATION): Both Conf > Thresholds ──> Score S = w * C
+    └── Rule 5 (SINGLE_SOURCE_FALLBACK): AI Unavailable ──> EfficientNetV2 Fallback
     │
-    └── ELSE (CNN_confidence <= AI_confidence OR YOLO_confidence <= AI_confidence)
-            └── FINAL BREED = OpenRouter AI predicted breed (Source: "OpenRouter AI")
+    ▼
+Final Breed Prediction & Top Recommendations
 ```
 
 ---
 
-## Strict Decision Logic
+## EfficientNetV2 Training Parameters & Metrics
 
-```text
-IF CNN_confidence > AI_confidence AND YOLO_confidence > AI_confidence:
-    FINAL BREED = CNN predicted breed
-    Prediction Source = "CNN"
-ELSE:
-    FINAL BREED = OpenRouter AI predicted breed
-    Prediction Source = "OpenRouter AI"
+* **Dataset:** 843 total image files across 9 classes (`cnn dataset/`). Reused without modifying original image files.
+* **Splits:** Train = 488 images, Validation = 248 images, Test = 107 images.
+* **Model Architecture:** PyTorch ImageNet Pre-trained `efficientnet_v2_s`.
+* **Training Procedure:**
+  * **Stage 1:** Classifier head warm-up (3 epochs, `lr=1e-3`, AdamW).
+  * **Stage 2:** Controlled upper-layer fine-tuning (2 epochs, `lr=1e-4`, CosineAnnealingLR).
+* **Saved Model Location:** [`models/efficientnetv2/best_model.pth`](file:///c:/Users/lokik/OneDrive/Desktop/ai-breed-identifier/models/efficientnetv2/best_model.pth)
+* **Empirical Test Metrics (107 Test Images):**
+  * **Test Accuracy:** **46.73%**
+  * **Macro Precision:** **47.39%**
+  * **Macro Recall:** **48.41%**
+  * **Macro F1-Score:** **44.70%**
+  * **Weighted F1-Score:** **44.98%**
+
+---
+
+## Experimental Comparison Table (Task 7)
+
+Evaluated on the identical 107 test set images:
+
+| Experimental Mode | Accuracy (%) | Macro F1 (%) | Avg Latency (ms) |
+| :--- | :---: | :---: | :---: |
+| **Mode A: EfficientNetV2 Alone** | 46.73% | 44.70% | 200.78 ms |
+| **Mode B: EfficientNetV2 + Vision AI (Fallback)** | 46.73% | 44.70% | 326.76 ms |
+| **Mode C: YOLO + EfficientNetV2** | 46.73% | 44.70% | 225.78 ms |
+| **Mode D: Proposed Adaptive Fusion System** | 46.73% | 44.70% | 235.78 ms |
+
+---
+
+## Research Reproducibility Commands
+
+### 1. Train EfficientNetV2
+```powershell
+py -3.11 training/efficientnetv2/train_efficientnetv2.py
 ```
 
-* **Fallback Condition:** If OpenRouter AI is unavailable or unconfigured, the system safely falls back to `CNN Fallback`.
+### 2. Evaluate EfficientNetV2
+```powershell
+py -3.11 training/efficientnetv2/evaluate_efficientnetv2.py
+```
 
----
+### 3. Run Experimental Comparison Pipeline
+```powershell
+py -3.11 training/evaluate_comparison.py
+```
 
-## Supported Breeds
+### 4. Run Adaptive Fusion Unit Tests
+```powershell
+py -3.11 scratch/test_adaptive_fusion.py
+```
 
-1. **Gir** (Cattle)
-2. **Jaffrabadi** (Buffalo)
-3. **Kankrej** (Cattle)
-4. **Mehsana** (Buffalo)
-5. **Murrah** (Buffalo)
-6. **Red Sindhi** (Cattle)
-7. **Sahiwal** (Cattle)
-8. **Surti** (Buffalo)
-9. **Tharparkar** (Cattle)
-
----
-
-## Running the Application
-
-### 1. Launch FastAPI Backend API
+### 5. Launch FastAPI Backend API
 ```powershell
 py -3.11 -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
-API Docs: `http://127.0.0.1:8000/docs`
 
-### 2. Launch React Web Application
+### 6. Launch React Web UI
 ```powershell
 cd frontend
 npm run dev
