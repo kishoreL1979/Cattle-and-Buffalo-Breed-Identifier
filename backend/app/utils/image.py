@@ -44,7 +44,14 @@ def validate_and_load_image(file_bytes: bytes, filename: str) -> Image.Image:
     # Re-open for actual processing (verify closes the file handle)
     try:
         image = Image.open(io.BytesIO(file_bytes))
-        return image.convert('RGB')
+        image = image.convert('RGB')
+        
+        # Memory optimization for 512MB RAM cloud tier: downscale high-res images to max 1024px
+        max_dim = 1024
+        if image.width > max_dim or image.height > max_dim:
+            image.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
+            
+        return image
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
