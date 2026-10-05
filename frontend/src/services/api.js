@@ -1,9 +1,25 @@
 import axios from 'axios';
 
-let rawUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').trim().replace(/\/+$/, '');
+let rawUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
+
+// Automatic resolution for cloud deployment if VITE_API_URL was omitted at build time
+if (!rawUrl && typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+  const host = window.location.hostname;
+  if (host.includes('onrender.com')) {
+    // Automatically maps e.g. breedvision-frontend.onrender.com -> https://breedvision-backend.onrender.com/api
+    const backendHost = host.replace(/-frontend(-[a-z0-9]+)?/, '$1').replace('.onrender.com', '');
+    rawUrl = `https://${backendHost.replace('-frontend', '')}-backend.onrender.com/api`;
+  }
+}
+
+if (!rawUrl) {
+  rawUrl = 'http://127.0.0.1:8000/api';
+}
+
 if (!rawUrl.endsWith('/api')) {
   rawUrl = `${rawUrl}/api`;
 }
+
 const API_BASE_URL = rawUrl;
 
 const api = axios.create({
