@@ -10,8 +10,8 @@ if (!rawUrl && typeof window !== 'undefined' && window.location.hostname !== 'lo
     const backendHost = host.replace(/-frontend(-[a-z0-9]+)?/, '$1').replace('.onrender.com', '');
     rawUrl = `https://${backendHost.replace('-frontend', '')}-backend.onrender.com/api`;
   } else {
-    // Vercel / Single Domain mode: relative /api
-    rawUrl = '/api';
+    // Vercel cloud frontend: connect to active backend service
+    rawUrl = 'https://cattle-and-buffalo-breed-identifier.onrender.com/api';
   }
 }
 
