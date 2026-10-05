@@ -2,13 +2,16 @@ import axios from 'axios';
 
 let rawUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/+$/, '');
 
-// Automatic resolution for cloud deployment if VITE_API_URL was omitted at build time
+// Automatic resolution for cloud deployment
 if (!rawUrl && typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
   const host = window.location.hostname;
   if (host.includes('onrender.com')) {
-    // Automatically maps e.g. breedvision-frontend.onrender.com -> https://breedvision-backend.onrender.com/api
+    // Render multi-service mode
     const backendHost = host.replace(/-frontend(-[a-z0-9]+)?/, '$1').replace('.onrender.com', '');
     rawUrl = `https://${backendHost.replace('-frontend', '')}-backend.onrender.com/api`;
+  } else {
+    // Vercel / Single Domain mode: relative /api
+    rawUrl = '/api';
   }
 }
 
