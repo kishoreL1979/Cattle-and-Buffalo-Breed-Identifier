@@ -12,10 +12,15 @@ MODEL_DIR = BASE_DIR / "models" / "cnn"
 MODEL_PATH = MODEL_DIR / "best_model.pth"
 CLASS_MAPPING_PATH = MODEL_DIR / "class_mapping.json"
 
-# OpenRouter Configuration
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "").strip()
-OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash").strip()
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+# OpenRouter Configuration (Supports both OPENROUTER_API_KEY and openrouter.api.key)
+OPENROUTER_API_KEY = (os.getenv("OPENROUTER_API_KEY") or os.getenv("openrouter.api.key") or "").strip()
+OPENROUTER_MODEL = (os.getenv("OPENROUTER_MODEL") or os.getenv("openrouter.model") or "google/gemini-2.5-flash").strip()
+
+base_url = (os.getenv("OPENROUTER_URL") or os.getenv("openrouter.base-url") or "https://openrouter.ai/api/v1").strip().rstrip("/")
+if not base_url.endswith("/chat/completions"):
+    OPENROUTER_URL = f"{base_url}/chat/completions"
+else:
+    OPENROUTER_URL = base_url
 
 # Canonical breed mapping to Animal Type
 BREED_TO_ANIMAL_TYPE = {
