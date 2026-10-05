@@ -1,0 +1,15 @@
+# Exclude heavy datasets, training runs, and raw images from Vercel function bundle
+cnn dataset/
+dataset_yolo/
+dataset/
+runs/
+training/
+scratch/
+results/
+yolov8n.pt
+*.jpg
+*.png
+*.jpeg
+*.webp
+*.csv
+*.mp4
